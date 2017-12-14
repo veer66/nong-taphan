@@ -1,0 +1,5 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+
+<http://airport.xyz/utp> geo:lat "12.6835"^^xsd:float ; geo:long "101.0019"^^xsd:float .
+<http://airport.xyz/cnx> geo:lat "18.7678"^^xsd:float ; geo:long "98.9645  "^^xsd:float .

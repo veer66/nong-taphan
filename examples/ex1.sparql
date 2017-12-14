@@ -1,0 +1,5 @@
+PREFIX spatial: <http://jena.apache.org/spatial#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?p  WHERE {
+   ?p spatial:nearby (12.6813 101.2816 1000.0 'km') .
+}
