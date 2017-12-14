@@ -32,14 +32,6 @@
     (.commit dataset))
   (.end dataset))
 
-(defn make-q-str [lat lon limit]
-  (str "PREFIX spatial: <http://jena.apache.org/spatial#>"
-       "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>"
-       "SELECT ?p  WHERE {"
-       "  ?p spatial:nearby (" lat " " lon " " limit " 'km') ."
-       ;;   "  ?p rdfs:label ?n ."
-       "}"))
-
 (defn query [dataset q-str]
   (.begin dataset ReadWrite/READ)
   (let [q (QueryFactory/create q-str)
@@ -58,25 +50,15 @@
 (def dataset (-> (init-base-dataset (:idx-path config))))
 (load-ttl dataset (:ttl-path config))
 
-(def q-str (make-q-str 12.6813 101.2816 1000.0))
-
 (defroutes app
   (GET "/" [] "<h1>nong-taphan</h1>")
   (POST "/query" req
         (let [body-q-str (-> req
                              :body
                              slurp)]
-          (println body-q-str)
           (let [resp (-> (resp/response (-> (query dataset body-q-str)
                                             res-set->json))
                          (resp/status 200)
                          (resp/header "Content-Type" "application/json"))]
             resp)))
   (route/not-found "Not found"))
-
-(defn -main
-  [& args]
-  (let [dataset (init-base-dataset "idx")]
-    (load-ttl dataset "ve.ttl")
-    (println "1000 KM from Rayong")
-    (println (res-set->json (query dataset q-str)))))
