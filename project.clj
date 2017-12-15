@@ -10,5 +10,6 @@
                  [compojure "1.6.0"]]
   :ring {:handler nong-taphan.core/app}
   :target-path "target/%s"
-  :profiles {:dev {:plugins [[lein-ring "0.12.0"]]}
-             :uberjar {:aot :all}})
+  :profiles {:dev {:plugins [[lein-ring "0.12.2"]]}
+                                        ;:uberjar {:aot :all}
+             })
