@@ -11,5 +11,6 @@
   :ring {:handler nong-taphan.core/app}
   :uberjar-name "server.jar"
   :target-path "target/%s"
-  :profiles {:dev {:plugins [[lein-ring "0.12.0"]]}
-             :uberjar {:aot :all}})
+  :profiles {:dev {:plugins [[lein-ring "0.12.2"]]}
+                                        ;:uberjar {:aot :all}
+             })
