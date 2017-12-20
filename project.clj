@@ -9,6 +9,7 @@
                  [org.clojure/tools.logging "0.4.0"]
                  [compojure "1.6.0"]]
   :ring {:handler nong-taphan.core/app}
+  :uberjar-name "server.jar"
   :target-path "target/%s"
   :profiles {:dev {:plugins [[lein-ring "0.12.0"]]}
              :uberjar {:aot :all}})

@@ -1,2 +1,2 @@
-(def config {:idx-path "examples/idx"
-             :ttl-path "examples/ve.ttl"})
+(def config {:idx-path "idx"
+             :ttl-path "data/ve.ttl"})
