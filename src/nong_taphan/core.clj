@@ -34,11 +34,15 @@
 
 (defn query [dataset q-str]
   (.begin dataset ReadWrite/READ)
-  (let [q (QueryFactory/create q-str)
-        q-exec (QueryExecutionFactory/create q dataset)
-        results (.execSelect q-exec)]
-    (.end dataset)
-    results))
+  (try
+    (let [q (QueryFactory/create q-str)
+          q-exec (QueryExecutionFactory/create q dataset)
+          results (.execSelect q-exec)]
+      (.end dataset)
+      results)
+    (catch Exception e
+      (.end dataset)
+      nil)))
 
 (defn res-set->json [res-set]
   (let [buf (java.io.ByteArrayOutputStream.)]
@@ -56,9 +60,15 @@
         (let [body-q-str (-> req
                              :body
                              slurp)]
-          (let [resp (-> (resp/response (-> (query dataset body-q-str)
-                                            res-set->json))
-                         (resp/status 200)
-                         (resp/header "Content-Type" "application/json"))]
-            resp)))
+          (let [q-res (query dataset body-q-str)]
+            (if q-res
+              (let [resp (-> (resp/response (-> q-res
+                                                res-set->json))
+                             (resp/status 200)
+                             (resp/header "Content-Type" "application/json"))]
+                resp)
+              (let [resp (-> (resp/response "{\"msg\":\"Invalid SPARQL\"}")
+                             (resp/status 500)
+                             (resp/header "Content-Type" "application/json"))]
+                resp)))))
   (route/not-found "Not found"))
