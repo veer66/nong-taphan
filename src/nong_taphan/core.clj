@@ -32,6 +32,13 @@
     (.commit dataset))
   (.end dataset))
 
+(defn res-set->json [res-set]
+  (let [buf (java.io.ByteArrayOutputStream.)]
+    (ResultSetFormatter/outputAsJSON buf res-set)
+    (-> buf
+        .toByteArray
+        String.)))
+
 (defn query [dataset q-str]
   (.begin dataset ReadWrite/READ)
   (try
@@ -39,17 +46,10 @@
           q-exec (QueryExecutionFactory/create q dataset)
           results (.execSelect q-exec)]
       (.end dataset)
-      results)
+      (res-set->json results))
     (catch Exception e
       (.end dataset)
       nil)))
-
-(defn res-set->json [res-set]
-  (let [buf (java.io.ByteArrayOutputStream.)]
-    (ResultSetFormatter/outputAsJSON buf res-set)
-    (-> buf
-        .toByteArray
-        String.)))
 
 (def dataset (-> (init-base-dataset (:idx-path config))))
 (load-ttl dataset (:ttl-path config))
@@ -60,10 +60,10 @@
         (let [body-q-str (-> req
                              :body
                              slurp)]
+          (println body-q-str)
           (let [q-res (query dataset body-q-str)]
             (if q-res
-              (let [resp (-> (resp/response (-> q-res
-                                                res-set->json))
+              (let [resp (-> (resp/response q-res)
                              (resp/status 200)
                              (resp/header "Content-Type" "application/json"))]
                 resp)
